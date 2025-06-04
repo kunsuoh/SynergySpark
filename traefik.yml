@@ -1,0 +1,36 @@
+# traefik.yml
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false # Optional
+
+api:
+  dashboard: true # Enables the Traefik dashboard (useful for debugging)
+  insecure: true  # WARNING: For local testing ONLY. Remove/secure for production.
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: "websecure"
+          scheme: "https"
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false # Only expose services with 'traefik.enable=true' label
+    network: synergyspark-net # Use the same network as other services
+
+certificatesResolvers:
+  letsencrypt_resolver:
+    acme:
+      # For testing, use Let's Encrypt staging environment
+      # caserver: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      # For production:
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      email: "your-email@example.com" # REPLACE THIS WITH A VALID EMAIL
+      storage: "/letsencrypt/acme.json" # Path inside the Traefik container
+      httpChallenge:
+        entryPoint: "web" # Use the HTTP entrypoint for challenges

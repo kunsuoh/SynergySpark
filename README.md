@@ -11,15 +11,17 @@ The original `script.js` has been refactored into `main.js`, `ui.js`, `scoring.j
   - `ui.js`: JavaScript for UI interactions and DOM manipulation.
   - `scoring.js`: JavaScript for survey scoring logic.
   - `feedback.js`: JavaScript for generating AI-driven feedback.
-  - `nginx.conf`: Custom Nginx configuration for the frontend, including reverse proxy.
+  - `nginx.conf`: Custom Nginx configuration for the frontend.
 - `backend/`: Contains the Node.js backend server.
   - `server.js`: The main backend server file.
   - `database/`: (Gitignored, created by server) Directory for SQLite database.
   - `package.json`, `package-lock.json`: Node.js project files.
   - `Dockerfile`: For building the backend Docker image.
   - `.gitignore`: Ignores `node_modules/` and `database/`.
-- `frontend.Dockerfile`: For building the frontend Docker image (build context is repository root).
+- `letsencrypt/`: (Created by user, mounted into Traefik) Stores ACME certificates.
+- `frontend.Dockerfile`: For building the frontend Docker image.
 - `docker-compose.yml`: For orchestrating the entire application with Docker Compose.
+- `traefik.yml`: (Reference) Traefik configuration file (primary config via `docker-compose.yml` commands for this project).
 - `README.md`: This file.
 - `script.js`: (Deprecated) Original monolithic script. Kept for reference if needed but not used by `index.html`.
 
@@ -27,13 +29,16 @@ The original `script.js` has been refactored into `main.js`, `ui.js`, `scoring.j
 
 There are multiple ways to run the SynergySpark application:
 
-### 1. Using Docker Compose (Recommended for Full Stack)
+### 1. Using Docker Compose (Recommended for Full Stack with HTTPS)
 
-This is the recommended method for running the integrated SynergySpark application (frontend and backend with database) locally.
+This is the recommended method for running the integrated SynergySpark application (frontend, backend with database, and Traefik for HTTPS) locally or for deployment.
 
 **Prerequisites:**
 - Docker installed on your system.
 - Docker Compose installed on your system.
+- A domain name (e.g., `synergy.droh.company`) pointing to your server's public IP address.
+- Ports 80 and 443 open on your server/firewall and directed to the host running Docker.
+- A valid email address to replace `your-email@example.com` in `docker-compose.yml` for the `traefik` service's Let's Encrypt configuration.
 
 **Build and Run:**
 Navigate to the root directory of the project (where `docker-compose.yml` is located).
@@ -45,8 +50,9 @@ docker-compose up --build
 - To run in detached mode (in the background), add the `-d` flag: `docker-compose up --build -d`.
 
 **Accessing the Application:**
-- Frontend Web Application: `http://localhost:8080`
-- Backend API (if direct access is needed for testing): `http://localhost:3000/api/assessments` (e.g., to view raw data from the GET endpoint)
+- **Frontend Web Application:** `https://synergy.droh.company` (HTTP will automatically redirect to HTTPS).
+- **Traefik Dashboard (for debugging, if enabled):** `http://localhost:8081` (Ensure `api.insecure=true` is set for Traefik in `docker-compose.yml` for local access. **Secure or disable for production.**)
+- **Backend API (for direct testing, if needed, though typically accessed via Traefik):** The backend is not directly exposed to the host by default when using Traefik for external access. Traefik routes `/api` requests to it.
 
 **Stopping the Application:**
 To stop all services and remove the containers and networks:
@@ -56,13 +62,24 @@ docker-compose down
 If you ran in detached mode, you can also stop with `docker-compose stop`.
 
 **Data Persistence:**
-The backend database (SQLite) is persisted using a Docker named volume (`synergyspark_db_data`). This means your assessment data will remain even if you stop and restart the containers. To remove the volume (and all data), you can run `docker volume rm synergyspark_db_data` after running `docker-compose down`. Be cautious with this command as it deletes data.
+The backend database (SQLite) is persisted using a Docker named volume (`synergyspark_db_data`). This means your assessment data will remain even if you stop and restart the containers. To remove the volume (and all data), you can run `docker volume rm synergyspark_db_data` after running `docker-compose down`. **Be cautious with this command as it deletes data.**
 
-### 2. Running Individual Services with Docker
+### HTTPS and Traefik Configuration Details
 
-These methods are useful for testing or running parts of the application in isolation.
+- **SSL/TLS Termination:** Traefik handles SSL/TLS termination for the `synergy.droh.company` domain. This means HTTPS connections are decrypted by Traefik, and traffic to backend services can be plain HTTP within the Docker network.
+- **Let's Encrypt:** Traefik is configured to automatically obtain and renew SSL certificates from Let's Encrypt using the HTTP-01 challenge.
+    - **Email:** You **must** replace `your-email@example.com` in the `traefik` service command arguments within `docker-compose.yml` with a valid email address.
+    - **DNS & Ports:** Ensure your domain's DNS A record points to your server's IP, and ports 80 (for HTTP challenge) and 443 (for HTTPS) are open and correctly routed to the Traefik container.
+- **Testing with Staging Server:** For initial testing or to avoid Let's Encrypt production rate limits, you can use the Let's Encrypt staging environment. In `docker-compose.yml`, within the `traefik` service's `command` section, comment out the production `caServer` line and uncomment the line for `https://acme-staging-v02.api.letsencrypt.org/directory`. Staging certificates are not trusted by browsers but are useful for verifying setup.
+- **`traefik.yml` vs. CLI commands:** This project primarily configures Traefik via command-line arguments in `docker-compose.yml` for clarity in this context. The `traefik.yml` file is provided as a common alternative configuration method; if you prefer to use it, you would mount it to `/etc/traefik/traefik.yml` in the Traefik service and remove corresponding CLI arguments.
+
+### 2. Running Individual Services with Docker (Legacy / For Specific Testing)
+
+These methods are useful for testing parts of the application in isolation but do not include the full Traefik HTTPS setup.
 
 #### Frontend Only
+
+(Note: Without Traefik or manual proxy setup, API calls to the backend will not work if the backend is running in a separate container without direct port exposure or CORS configured.)
 
 **Build the Docker image:**
 ```bash
@@ -73,7 +90,7 @@ docker build -t synergyspark-frontend -f frontend.Dockerfile .
 ```bash
 docker run -d -p 8080:80 synergyspark-frontend
 ```
-(The application will be accessible at `http://localhost:8080`. API calls will fail unless a backend is running and accessible.)
+(The application will be accessible at `http://localhost:8080`.)
 
 **To stop the container:**
 First, find the container ID: `docker ps`

@@ -1,0 +1,44 @@
+# .gitignore (root of project)
+.env
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs (if any at root, though usually in subdirs)
+# build/
+# dist/
+
+# Dependency directories (already handled by backend/.gitignore for backend)
+# node_modules/ # Generally good to have at root as well if any root-level JS tools are used
+
+# Other
+# letsencrypt/ # Decided not to ignore this as it's needed for cert persistence with Traefik volume
+# but if it contained sensitive live certs and was not just for acme.json storage, one might reconsider.
+# For this project, acme.json is the key persistent item here via volume.
+# If the directory itself isn't committed but created by user, it's fine.
+# The `letsencrypt` directory was created by the agent earlier. Let's assume it's fine to track an empty dir.
+# If it gets populated by docker run, those generated files would be untracked if letsencrypt/* was added.
+# For now, just .env is critical.
+# The `letsencrypt` directory was created by the agent earlier. It's empty.
+# If it gets populated by `docker-compose up`, those generated files (acme.json)
+# would be untracked if `letsencrypt/*` was added here.
+# However, the volume mount `./letsencrypt:/letsencrypt` means local changes to `letsencrypt/`
+# would be reflected in the container, and vice-versa.
+# For this project, it's better to NOT ignore `letsencrypt/acme.json` if we want to commit a placeholder or an actual (non-sensitive, e.g., staging) cert.
+# But for this project, it's better to ensure the directory exists and the volume handles it.
+# So, not adding letsencrypt/ to .gitignore.
+# The `script.js` is marked as deprecated but still in the repo.
+# The .env is the primary concern for this step.

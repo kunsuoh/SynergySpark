@@ -1,28 +1,72 @@
 // ui.js
 
-function displayErrorMessage(message) {
+function displayErrorMessage(message) { // For general form validation errors
     const resultsDiv = document.getElementById('results');
     if (resultsDiv) {
-        resultsDiv.innerHTML = `<p class="error-message">${message}</p>`;
+        resultsDiv.innerHTML = `<p class="error-message">${message}</p>`; // Uses global .error-message
         resultsDiv.style.display = 'block';
     }
-    const aiFeedbackDiv = document.getElementById('aiFeedback');
-    if (aiFeedbackDiv) {
-        aiFeedbackDiv.style.display = 'none';
+    hideAIfeedback();
+}
+
+// --- AI Feedback Specific UI Functions ---
+function showAIFeedbackLoading() {
+    const aiFeedbackTextElement = document.getElementById('aiFeedbackText');
+    const aiFeedbackContainer = document.getElementById('aiFeedback');
+
+    if (aiFeedbackTextElement && aiFeedbackContainer) {
+        aiFeedbackTextElement.innerHTML = '<p class="loading-message">AI 분석결과를 생성 중입니다. 잠시만 기다려 주세요...</p>';
+        aiFeedbackTextElement.className = ''; // Clear other classes like 'error-message' if any
+        aiFeedbackContainer.style.display = 'block';
     }
 }
+
+function displayAIFeedbackError(errorMessage) {
+    const aiFeedbackTextElement = document.getElementById('aiFeedbackText');
+    const aiFeedbackContainer = document.getElementById('aiFeedback');
+
+    if (aiFeedbackTextElement && aiFeedbackContainer) {
+        // Use error-message class scoped within #aiFeedbackText if specific styling is needed
+        // For now, assuming #aiFeedbackText .error-message CSS handles it.
+        aiFeedbackTextElement.innerHTML = \`<p class="error-message">\${errorMessage}</p>\`;
+        aiFeedbackTextElement.className = 'error-message-parent'; // Example if needed for parent styling
+        aiFeedbackContainer.style.display = 'block';
+    }
+}
+
+function displayAIfeedback(feedbackText) { // Displays successful AI feedback
+    const aiFeedbackTextElement = document.getElementById('aiFeedbackText');
+    const aiFeedbackContainer = document.getElementById('aiFeedback');
+
+    if (aiFeedbackTextElement && aiFeedbackContainer) {
+        aiFeedbackTextElement.innerText = feedbackText;
+        aiFeedbackTextElement.className = ''; // Reset any specific classes (like loading or error)
+        aiFeedbackContainer.style.display = 'block';
+    } else {
+        console.error("#aiFeedbackText or #aiFeedback element not found.");
+    }
+}
+
+function hideAIfeedback() {
+    const aiFeedbackContainer = document.getElementById('aiFeedback');
+    if (aiFeedbackContainer) {
+        aiFeedbackContainer.style.display = 'none';
+    }
+    const aiFeedbackTextElement = document.getElementById('aiFeedbackText');
+    if (aiFeedbackTextElement) {
+        aiFeedbackTextElement.innerHTML = ''; // Clear previous content (loading, error, or success)
+        aiFeedbackTextElement.className = ''; // Reset classes
+    }
+}
+// --- End AI Feedback Specific UI Functions ---
 
 function clearPreviousResults() {
     const resultsDiv = document.getElementById('results');
     if (resultsDiv) {
-        resultsDiv.innerHTML = ''; // Clear previous results
-        resultsDiv.style.display = 'none'; // Hide until new results are ready
+        resultsDiv.innerHTML = '';
+        resultsDiv.style.display = 'none';
     }
-    const aiFeedbackDiv = document.getElementById('aiFeedback');
-    if (aiFeedbackDiv) {
-        aiFeedbackDiv.innerHTML = '<h2>Personalized Feedback</h2><p id="aiFeedbackText">Your personalized feedback will appear here.</p>'; // Reset content
-        aiFeedbackDiv.style.display = 'none';
-    }
+    hideAIfeedback();
 }
 
 function displayNumericalResults(scores, levels, competencyOrder, competencyKoreanNames) {
@@ -31,7 +75,7 @@ function displayNumericalResults(scores, levels, competencyOrder, competencyKore
         console.error("Results div not found!");
         return;
     }
-    resultsDiv.innerHTML = ''; // Clear previous content (like error messages)
+    resultsDiv.innerHTML = '';
 
     const titleElement = document.createElement('h2');
     titleElement.textContent = "Your SynergySpark Profile";
@@ -54,17 +98,6 @@ function displayNumericalResults(scores, levels, competencyOrder, competencyKore
     resultsDiv.style.display = 'block';
 }
 
-function displayAIfeedback(feedbackText) {
-    const aiFeedbackTextElement = document.getElementById('aiFeedbackText');
-    const aiFeedbackDiv = document.getElementById('aiFeedback');
-
-    if (aiFeedbackTextElement && aiFeedbackDiv) {
-        aiFeedbackTextElement.innerText = feedbackText;
-        aiFeedbackDiv.style.display = 'block';
-    } else {
-        console.error("AI Feedback elements not found!");
-    }
-}
 
 function getSelectedAnswers(formElement, numberOfQuestions) {
     const selectedAnswers = {};
@@ -77,29 +110,14 @@ function getSelectedAnswers(formElement, numberOfQuestions) {
             selectedAnswers[questionName] = selectedOptionInput.value;
         } else {
             allAnswered = false;
-            // No need to break, main.js will check allAnswered status
         }
     }
     return { answers: selectedAnswers, allAnswered: allAnswered };
 }
 
-function hideAIRelicsOnSubmit() {
-    const aiFeedbackDiv = document.getElementById('aiFeedback');
-    if (aiFeedbackDiv) {
-        aiFeedbackDiv.style.display = 'none';
-    }
-}
-
 function initialUISetup() {
-    // Ensure AI feedback is hidden on initial load,
-    // regardless of HTML state, to be controlled by JS.
     const aiFeedbackDiv = document.getElementById('aiFeedback');
     if (aiFeedbackDiv) {
         aiFeedbackDiv.style.display = 'none';
     }
-    // Placeholder text for results div is managed by HTML or not shown due to display:none
-    // const resultsDiv = document.getElementById('results');
-    // if (resultsDiv && resultsDiv.innerHTML.trim() === "") {
-    //      resultsDiv.innerHTML = "<p>Complete the questionnaire and click 'Submit Answers' to see your profile.</p>";
-    // }
 }

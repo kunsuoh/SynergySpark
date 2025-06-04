@@ -163,7 +163,27 @@ button#submitBtn:hover {
     line-height: 1.7;
     font-size: 1.05em;
     color: #343a40;
+    padding-top: 10px; /* Add some space if content is directly inside */
 }
+
+/* Styling for loading and error messages within AI Feedback */
+#aiFeedbackText .loading-message {
+    color: #555;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0; /* Adjusted padding */
+}
+
+#aiFeedbackText .error-message { /* Scoped error message for AI feedback */
+    color: #D8000C;
+    background-color: #FFD2D2;
+    border: 1px solid #D8000C;
+    padding: 15px;
+    margin-top: 0; /* Reset margin if it's the only child */
+    border-radius: 4px;
+    text-align: center;
+}
+
 
 /* Static Content Sections (기대 효과, 향후 발전 방향) */
 .static-content-section {
@@ -185,14 +205,14 @@ button#submitBtn:hover {
     color: #495057;
 }
 
-/* Utility classes */
-.error-message {
-    color: #721c24; /* Darker red for text */
-    background-color: #f8d7da; /* Light red background */
-    border: 1px solid #f5c6cb; /* Red border */
-    padding: 10px 15px; /* More padding */
+/* Utility classes - Global error message styling (e.g., for form validation) */
+.error-message { /* This is the global one, used by displayErrorMessage in ui.js */
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
     margin-top: 10px;
-    margin-bottom: 10px; /* Ensure space around message */
+    margin-bottom: 10px;
     border-radius: 5px;
     text-align: center;
     font-weight: bold;

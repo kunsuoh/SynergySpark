@@ -10,8 +10,10 @@ const NUMBER_OF_QUESTIONS = 10;
 
 // --- Function to send data to backend ---
 async function sendDataToBackend(assessmentData) {
+    showAIFeedbackLoading(); // From ui.js - Show loading state BEFORE fetch
+
     try {
-        const response = await fetch('/api/assessments', { // Assumes backend is on the same origin or proxied
+        const response = await fetch('/api/assessments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -23,31 +25,41 @@ async function sendDataToBackend(assessmentData) {
 
         if (!response.ok) {
             console.error('Failed to send assessment data to backend:', responseData.message || response.statusText);
-            // Using alert for simplicity as requested, could be replaced by a ui.js function
-            alert(`Error saving data: ${responseData.message || response.statusText}`);
+            const errorMsg = responseData.message || \`서버 응답 오류 (\${response.status})\`; // Corrected template literal
+            displayAIFeedbackError(\`AI 분석 중 다음 오류 발생: \${errorMsg}\`); // From ui.js
             return;
         }
 
         console.log('Assessment data sent successfully:', responseData);
-        // Optional: display a non-intrusive success message
-        // e.g., ui.displaySuccessToast("Assessment saved!");
+
+        if (responseData.aiFeedback) {
+            // Check if the feedback itself indicates an error from backend's AI generation attempt
+            if (responseData.aiFeedback.startsWith("AI 피드백을 생성하는 중 오류가 발생했습니다") ||
+                responseData.aiFeedback.startsWith("AI feedback generation is currently unavailable") ||
+                responseData.aiFeedback.startsWith("AI 피드백 생성 중 안전 문제로 인해 내용이 차단되었습니다")) {
+                displayAIFeedbackError(responseData.aiFeedback); // Display the backend's specific AI error
+            } else {
+                displayAIfeedback(responseData.aiFeedback); // From ui.js - Display successful AI feedback
+            }
+        } else {
+            displayAIFeedbackError("AI 피드백을 받지 못했습니다. 서버로부터 피드백이 전달되지 않았습니다."); // From ui.js
+        }
 
     } catch (error) {
         console.error('Error sending assessment data:', error);
-        alert('An unexpected error occurred while trying to save your assessment. Please check the console.');
+        displayAIFeedbackError('네트워크 오류 또는 예기치 않은 문제로 AI 분석 요청에 실패했습니다. 인터넷 연결을 확인해주세요.'); // From ui.js
     }
 }
 // --- End of backend communication function ---
 
-// Helper function to generate profile string (moved here for direct use in main)
 function generateProfileString(levels) {
     let profileStr = "";
     COMPETENCY_ORDER.forEach(comp => {
         if (levels[comp] && typeof levels[comp].level !== 'undefined') {
             profileStr += comp.charAt(0) + levels[comp].level;
         } else {
-            console.warn(`Level not found for competency ${comp} in generateProfileString. Using '0'.`);
-            profileStr += comp.charAt(0) + '0'; // Default if level is missing
+            console.warn(\`Level not found for competency \${comp} in generateProfileString. Using '0'.\`); // Corrected template literal
+            profileStr += comp.charAt(0) + '0';
         }
     });
     return profileStr;
@@ -62,14 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const quizForm = document.getElementById('quizForm');
 
     if (submitButton && quizForm) {
-        submitButton.addEventListener('click', async function(event) { // Made async for await sendDataToBackend
+        submitButton.addEventListener('click', async function(event) {
             event.preventDefault();
 
-            clearPreviousResults(); // From ui.js
+            clearPreviousResults(); // From ui.js - also calls hideAIfeedback()
 
             const { answers: selectedRawAnswers, allAnswered } = getSelectedAnswers(quizForm, NUMBER_OF_QUESTIONS); // From ui.js
 
             if (!allAnswered) {
+                // displayErrorMessage is for the #results div. We don't want to use that if we're about to show AI feedback.
+                // For this case, it's better to use the AI feedback display area for consistency if the error is about AI.
+                // However, this is a form validation error, not an AI error. So, displayErrorMessage is appropriate here.
                 displayErrorMessage("Please answer all questions before submitting."); // From ui.js
                 return;
             }
@@ -85,19 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             displayNumericalResults(rawScores, currentCompetencyLevels, COMPETENCY_ORDER, COMPETENCY_KOREAN_NAMES); // from ui.js
 
-            const feedbackText = generateAIFeedbackText(
-                rawScores,
-                currentCompetencyLevels,
-                COMPETENCY_ORDER,
-                COMPETENCY_KOREAN_NAMES,
-                getLevelThresholds()
-            ); // from feedback.js
+            console.log("Frontend processing for scores complete. Sending data to backend for AI feedback...");
 
-            displayAIfeedback(feedbackText); // from ui.js
-
-            console.log("Frontend processing complete. Scores and feedback displayed.");
-
-            // --- Prepare and send data to backend ---
             const profileString = generateProfileString(currentCompetencyLevels);
 
             const assessmentToSave = {
@@ -114,12 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 anchor_score: rawScores['ANCHOR'],
                 anchor_level: currentCompetencyLevels['ANCHOR'].level,
                 profile_string: profileString,
-                raw_answers: selectedRawAnswers // from getSelectedAnswers above
+                raw_answers: selectedRawAnswers
             };
 
-            console.log("Data prepared for backend:", assessmentToSave);
-            await sendDataToBackend(assessmentToSave); // Call the function to send data
-            // --- End of backend data sending ---
+            await sendDataToBackend(assessmentToSave);
+
+            console.log("Backend data processing and AI feedback display initiated.");
         });
     } else {
         console.error("Submit button or quiz form not found!");

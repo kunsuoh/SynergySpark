@@ -22,8 +22,36 @@ The original `script.js` has been refactored into `main.js`, `ui.js`, `scoring.j
 - `frontend.Dockerfile`: For building the frontend Docker image.
 - `docker-compose.yml`: For orchestrating the entire application with Docker Compose.
 - `traefik.yml`: (Reference) Traefik configuration file (primary config via `docker-compose.yml` commands for this project).
+- `.env.example`: Example environment file for API keys.
 - `README.md`: This file.
 - `script.js`: (Deprecated) Original monolithic script. Kept for reference if needed but not used by `index.html`.
+
+## Prerequisites for Running the Full Application
+- Docker installed on your system.
+- Docker Compose installed on your system.
+- A domain name (e.g., `synergy.droh.company`) pointing to your server's public IP address (for HTTPS via Traefik).
+- Ports 80 and 443 open on your server/firewall and directed to the host running Docker (for Traefik).
+
+## Configuration: Setting up the Gemini API Key
+
+This application uses the Google Gemini API to generate personalized feedback. To enable this feature, you need to obtain a Gemini API key and make it available to the backend service.
+
+1.  **Obtain an API Key:**
+    - Go to [Google AI Studio](https://aistudio.google.com/apikey) (or Google Cloud Console).
+    - Create a new project if you don't have one.
+    - Generate an API key for the Gemini API. **Keep this key secure and do not commit it to version control.**
+
+2.  **Create a `.env` file:**
+    - In the root directory of this project, create a file named `.env`.
+    - Copy the contents of `.env.example` into your new `.env` file.
+    - Replace `YOUR_GEMINI_API_KEY_HERE` with the actual API key you obtained.
+      ```env
+      # .env
+      GEMINI_API_KEY=your_actual_gemini_api_key
+      ```
+    - The `.env` file is listed in the root `.gitignore`, so your API key will not be committed.
+
+The `docker-compose.yml` file is configured to read the `GEMINI_API_KEY` from this `.env` file and pass it to the backend service. If this key is not provided or is invalid, AI feedback generation will fail or be disabled.
 
 ## Running the Application
 
@@ -33,12 +61,12 @@ There are multiple ways to run the SynergySpark application:
 
 This is the recommended method for running the integrated SynergySpark application (frontend, backend with database, and Traefik for HTTPS) locally or for deployment.
 
-**Prerequisites:**
-- Docker installed on your system.
-- Docker Compose installed on your system.
-- A domain name (e.g., `synergy.droh.company`) pointing to your server's public IP address.
-- Ports 80 and 443 open on your server/firewall and directed to the host running Docker.
-- A valid email address to replace `your-email@example.com` in `docker-compose.yml` for the `traefik` service's Let's Encrypt configuration.
+**Prerequisites (Recap):**
+- Docker and Docker Compose installed.
+- Domain name configured and pointing to your server IP.
+- Ports 80 & 443 open and forwarded.
+- **Valid email address** to replace `your-email@example.com` in `docker-compose.yml` (for the `traefik` service's Let's Encrypt configuration).
+- **`GEMINI_API_KEY` configured in a `.env` file** as described above.
 
 **Build and Run:**
 Navigate to the root directory of the project (where `docker-compose.yml` is located).
@@ -64,6 +92,10 @@ If you ran in detached mode, you can also stop with `docker-compose stop`.
 **Data Persistence:**
 The backend database (SQLite) is persisted using a Docker named volume (`synergyspark_db_data`). This means your assessment data will remain even if you stop and restart the containers. To remove the volume (and all data), you can run `docker volume rm synergyspark_db_data` after running `docker-compose down`. **Be cautious with this command as it deletes data.**
 
+### Backend Service Notes
+- The backend service now requires the `GEMINI_API_KEY` as configured in the `.env` file.
+- The backend Docker image has been updated to use Node.js 20.x to support the latest Google Generative AI SDK.
+
 ### HTTPS and Traefik Configuration Details
 
 - **SSL/TLS Termination:** Traefik handles SSL/TLS termination for the `synergy.droh.company` domain. This means HTTPS connections are decrypted by Traefik, and traffic to backend services can be plain HTTP within the Docker network.
@@ -75,7 +107,7 @@ The backend database (SQLite) is persisted using a Docker named volume (`synergy
 
 ### 2. Running Individual Services with Docker (Legacy / For Specific Testing)
 
-These methods are useful for testing parts of the application in isolation but do not include the full Traefik HTTPS setup.
+These methods are useful for testing parts of the application in isolation but do not include the full Traefik HTTPS setup or `.env` file integration for API keys.
 
 #### Frontend Only
 
@@ -97,6 +129,8 @@ First, find the container ID: `docker ps`
 Then, stop it using the ID: `docker stop <container_id>`
 
 #### Backend Only (Independently)
+
+(Note: When running independently, you would need to manually set the `GEMINI_API_KEY` and `PORT` environment variables, e.g., `docker run -d -p 3000:3000 -e PORT=3000 -e GEMINI_API_KEY=your_key synergyspark-backend`)
 
 **Build the Docker image:**
 (Ensure your terminal is at the project root)

@@ -3,93 +3,73 @@ version: '3.8'
 
 services:
   traefik:
-    image: "traefik:v2.10" # Use a specific Traefik version
+    image: "traefik:v2.10"
     container_name: "traefik"
     command:
-      - "--api.insecure=true" # For local dashboard access, REMOVE/SECURE for production
+      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=synergyspark-net" # Specify the network for Docker provider
+      - "--providers.docker.network=synergyspark-net"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencrypt_resolver.acme.email=your-email@example.com" # REPLACE WITH YOUR EMAIL
+      - "--certificatesresolvers.letsencrypt_resolver.acme.email=your-email@example.com" # USER MUST REPLACE
       - "--certificatesresolvers.letsencrypt_resolver.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt_resolver.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt_resolver.acme.httpchallenge.entrypoint=web"
       # Staging server - uncomment for testing to avoid rate limits
       # - "--certificatesresolvers.letsencrypt_resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      # Production server (default if caserver is not specified, or explicitly)
+      # Production server
       - "--certificatesresolvers.letsencrypt_resolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
-      # Redirect HTTP to HTTPS
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
       - "80:80"
       - "443:443"
-      - "8081:8080" # For Traefik dashboard (REMOVE/SECURE for production)
+      - "8081:8080"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro" # Allow Traefik to listen to Docker events
-      - "./letsencrypt:/letsencrypt" # Persist ACME certificates
-      # traefik.yml is not mounted as per subtask decision to use CLI args primarily
-      # - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
     networks:
       - synergyspark-net
     restart: unless-stopped
 
   frontend:
     build:
-      context: . # Build context is the root of the project
+      context: .
       dockerfile: frontend.Dockerfile
     container_name: synergyspark-frontend
     depends_on:
-      - backend # Ensures backend is available by name, though Traefik handles actual routing readiness
+      - backend
     networks:
       - synergyspark-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend-http.rule=Host(`synergy.droh.company`)"
       - "traefik.http.routers.frontend-http.entrypoints=web"
-      # The global HTTP to HTTPS redirection in Traefik's command arguments handles this.
-      # If specific middleware for redirection is needed, it can be added:
-      # - "traefik.http.routers.frontend-http.middlewares=redirect-to-https@docker"
-      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-
       - "traefik.http.routers.frontend-secure.rule=Host(`synergy.droh.company`)"
       - "traefik.http.routers.frontend-secure.entrypoints=websecure"
       - "traefik.http.routers.frontend-secure.tls=true"
       - "traefik.http.routers.frontend-secure.tls.certresolver=letsencrypt_resolver"
-      - "traefik.http.services.frontend-svc.loadbalancer.server.port=80" # Nginx port inside frontend container
+      - "traefik.http.services.frontend-svc.loadbalancer.server.port=80"
     restart: unless-stopped
-    # Removed 'ports' mapping, Traefik handles external access via Host rule
 
   backend:
     build:
-      context: ./backend # Build context is the backend directory
-      dockerfile: Dockerfile # Refers to backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: synergyspark-backend
     volumes:
-      - synergyspark_db_data:/usr/src/app/database # Persist SQLite DB
+      - synergyspark_db_data:/usr/src/app/database
     environment:
       - PORT=3000
+      - NODE_ENV=development # Or production, depending on needs
+      - GEMINI_API_KEY=\${GEMINI_API_KEY} # Reads from .env file at root or host environment
     networks:
       - synergyspark-net
-    labels:
-      - "traefik.enable=true"
-      # HTTP router for backend API
-      - "traefik.http.routers.backend-http.rule=Host(`synergy.droh.company`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.backend-http.entrypoints=web" # Will be redirected by global redirect
-      # HTTPS router for backend API
-      - "traefik.http.routers.backend-secure.rule=Host(`synergy.droh.company`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.backend-secure.entrypoints=websecure"
-      - "traefik.http.routers.backend-secure.tls=true"
-      - "traefik.http.routers.backend-secure.tls.certresolver=letsencrypt_resolver"
-      - "traefik.http.services.backend-svc.loadbalancer.server.port=3000" # Node.js app port
     restart: unless-stopped
-    # Removed 'ports' mapping for external access, Traefik handles it.
 
 volumes:
-  synergyspark_db_data: # Named volume for database persistence
+  synergyspark_db_data:
 
 networks:
   synergyspark-net:

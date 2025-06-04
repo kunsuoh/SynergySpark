@@ -1,0 +1,199 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern sans-serif stack */
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Lighter overall background */
+    color: #343a40; /* Darker text for better contrast */
+}
+
+.main-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff; /* White background for content area */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+}
+
+/* Header */
+header {
+    background: #007bff; /* A more vibrant primary color */
+    color: #ffffff;
+    padding: 1.5rem 0; /* Increased padding */
+    text-align: center;
+    margin-bottom: 20px; /* Space below header */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em; /* Larger heading */
+    font-weight: 600; /* Slightly bolder */
+}
+
+/* General Section Styling */
+section { /* Applies to introduction, questionnaire-section, results-section */
+    padding: 20px;
+    margin-bottom: 25px; /* Consistent bottom margin */
+    background: #ffffff; /* Ensure sections on main container are white */
+    border-radius: 8px;
+    border: 1px solid #e9ecef; /* Light border for sections */
+}
+
+section h2,
+.static-content-section h2 { /* Common styling for all H2s */
+    color: #0056b3; /* Darker blue for headings */
+    margin-top: 0; /* Remove default top margin if inside a section */
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #007bff; /* Emphasize headings */
+    font-size: 1.8em;
+}
+
+/* Introduction Section */
+#introduction p {
+    font-size: 1.1em;
+    color: #495057; /* Slightly lighter than main text for intro */
+}
+
+/* Questionnaire Styling */
+#questionnaire-section h2 { /* Specific margin for questionnaire heading if needed */
+    margin-bottom: 20px;
+}
+
+#questionnaire fieldset {
+    border: 1px solid #ced4da; /* Standard Bootstrap-like border color */
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+#questionnaire legend {
+    font-weight: 600; /* Bolder legend */
+    padding: 0 10px;
+    margin-left: 10px;
+    font-size: 1.15em;
+    color: #0056b3;
+}
+
+#questionnaire label {
+    display: block;
+    margin-bottom: 10px; /* Increased spacing for options */
+    cursor: pointer;
+    font-size: 1em;
+    color: #495057;
+}
+
+#questionnaire label:hover {
+    background-color: #f8f9fa; /* Subtle hover for radio labels */
+    border-radius: 4px;
+}
+
+
+#questionnaire input[type="radio"] {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+button#submitBtn {
+    display: block; /* Make button block to control margin auto */
+    background: #28a745; /* Green for submit actions */
+    color: #ffffff;
+    border: none;
+    padding: 12px 25px; /* Larger padding */
+    margin: 20px auto 0 auto; /* Centered with top margin */
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button#submitBtn:hover {
+    background: #218838; /* Darker green on hover */
+}
+
+/* Results & AI Feedback Sections */
+#results, #aiFeedback {
+    display: none; /* Initially hidden */
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-style: solid;
+}
+
+#results {
+    background-color: #e9f5e9; /* Light green background for results */
+    border-color: #a3d9a5; /* Softer border for results */
+}
+
+#results h2 {
+    color: #155724;
+    border-bottom-color: #28a745;
+}
+
+#results .competency-item {
+    padding: 10px;
+    border-bottom: 1px solid #c3e6cb; /* Lighter separator */
+}
+#results .competency-item:last-child {
+    border-bottom: none;
+}
+#results .competency-item p {
+    margin: 0.5rem 0;
+    font-size: 1.05em;
+    color: #155724;
+}
+
+
+#aiFeedback {
+    background-color: #fdfdfe;
+    border-color: #BBE6A3;
+}
+
+#aiFeedback h2 {
+    color: #333;
+    border-bottom-color: #555;
+}
+
+#aiFeedbackText {
+    white-space: pre-wrap;
+    line-height: 1.7;
+    font-size: 1.05em;
+    color: #343a40;
+}
+
+/* Static Content Sections (기대 효과, 향후 발전 방향) */
+.static-content-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.static-content-section ul {
+    list-style: disc;
+    padding-left: 25px;
+    margin-top: 10px;
+}
+
+.static-content-section ul li {
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+/* Utility classes */
+.error-message {
+    color: #721c24; /* Darker red for text */
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #f5c6cb; /* Red border */
+    padding: 10px 15px; /* More padding */
+    margin-top: 10px;
+    margin-bottom: 10px; /* Ensure space around message */
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}

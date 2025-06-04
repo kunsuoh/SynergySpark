@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynergySpark</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>SynergySpark</h1>
+    </header>
+
+    <section id="introduction">
+        <h2>Introduction</h2>
+        <p>SynergySpark is a revolutionary service designed to help you understand your collaboration style and improve your teamwork skills. By answering a series of questions, you'll gain insights into your strengths and weaknesses as a collaborator, and receive personalized recommendations for growth.</p>
+    </section>
+
+    <section id="questionnaire-section">
+        <h2>Questionnaire</h2>
+        <form id="quizForm">
+            <div id="questionnaire">
+                <fieldset>
+                    <legend>Question 1: 팀 프로젝트 마감이 임박했고, 예상치 못한 심각한 문제가 발생했습니다. 이 상황에서 당신이 가장 먼저 취할 행동은 무엇인가요?</legend>
+                    <label><input type="radio" name="q1" value="A" id="q1a"> A) 즉시 팀 회회의를 소집하여 문제를 공유하고 해결책을 논의한다.</label><br>
+                    <label><input type="radio" name="q1" value="B" id="q1b"> B) 관련된 핵심 인물들과 빠르게 소통하여 상황을 파악하고 다음 단계를 결정한다.</label><br>
+                    <label><input type="radio" name="q1" value="C" id="q1c"> C) 침착하게 문제의 원인을 분석하고 가능한 해결책들을 먼저 구상한다.</label><br>
+                    <label><input type="radio" name="q1" value="D" id="q1d"> D) 잠시 시간을 갖고 스트레스를 관리한 후, 맑은 정신으로 문제에 접근한다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 2: 새로운 팀 프로젝트 아이디어 회의 중, 당신의 의견과 정반대되는 주장이 나왔지만, 그 주장에도 일리가 있다고 느껴집니다. 당신은 어떻게 반응할 것 같나요?</legend>
+                    <label><input type="radio" name="q2" value="A" id="q2a"> A) 상대방의 주장을 경청하고, 어떤 점에서 일리가 있는지 이해하려고 노력한다.</label><br>
+                    <label><input type="radio" name="q2" value="B" id="q2b"> B) 내 의견의 장점을 다시 한번 강조하며 설득을 시도한다.</label><br>
+                    <label><input type="radio" name="q2" value="C" id="q2c"> C) 두 의견의 장점을 조합할 수 있는 절충안을 찾아본다.</label><br>
+                    <label><input type="radio" name="q2" value="D" id="q2d"> D) 일단 침묵하고 다른 사람들의 의견을 더 들어본다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 3: 팀원 중 한 명이 개인적인 어려움으로 인해 최근 업무 집중도가 떨어져 보입니다. 당신이라면 어떤 접근을 고려하겠습니까?</legend>
+                    <label><input type="radio" name="q3" value="A" id="q3a"> A) 직접 다가가 개인적인 어려움에 대해 묻고, 내가 도울 수 있는 일이 있는지 확인한다.</label><br>
+                    <label><input type="radio" name="q3" value="B" id="q3b"> B) 팀장이나 다른 동료에게 해당 팀원의 상황을 알리고 지원 방안을 논의한다.</label><br>
+                    <label><input type="radio" name="q3" value="C" id="q3c"> C) 공개적으로 언급하기보다는, 그 팀원의 업무 부담을 덜어줄 수 있는 방법을 조용히 찾아본다.</label><br>
+                    <label><input type="radio" name="q3" value="D" id="q3d"> D) 개인적인 문제이므로 직접 개입하기보다는 스스로 해결할 시간을 준다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 4: 팀 목표 달성을 위해 기존 방식으로는 한계가 느껴질 때, 당신은 주로 어떤 역할을 자처하는 편인가요?</legend>
+                    <label><input type="radio" name="q4" value="A" id="q4a"> A) 새로운 아이디어나 접근 방식을 적극적으로 제안하고 탐색한다.</label><br>
+                    <label><input type="radio" name="q4" value="B" id="q4b"> B) 현재 진행 중인 방식을 개선하거나 최적화하는 데 집중한다.</label><br>
+                    <label><input type="radio" name="q4" value="C" id="q4c"> C) 팀원들의 사기를 북돋우고 목표에 다시 집중하도록 독려한다.</label><br>
+                    <label><input type="radio" name="q4" value="D" id="q4d"> D) 필요한 외부 자원이나 정보를 찾아 팀에 공유한다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 5: 팀 내에서 의견 충돌이 발생하여 논쟁이 길어지고 있습니다. 당신은 보통 어떻게 행동하나요?</legend>
+                    <label><input type="radio" name="q5" value="A" id="q5a"> A) 적극적으로 중재에 나서 양측의 입장을 듣고 공통점을 찾으려 한다.</label><br>
+                    <label><input type="radio" name="q5" value="B" id="q5b"> B) 논쟁이 과열되지 않도록 잠시 휴식을 제안하거나 분위기를 환기시킨다.</label><br>
+                    <label><input type="radio" name="q5" value="C" id="q5c"> C) 내 의견이 있다면 명확히 밝히고, 논리적으로 다른 사람들을 설득하려 한다.</label><br>
+                    <label><input type="radio" name="q5" value="D" id="q5d"> D) 논쟁이 자연스럽게 마무리될 때까지 기다리며 관망한다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 6: 당신에게 새롭고 도전적인 업무가 주어졌습니다. 이 업무를 어떻게 시작하겠습니까?</legend>
+                    <label><input type="radio" name="q6" value="A" id="q6a"> A) 즉시 업무에 뛰어들어 시도하면서 배우고 해결해 나간다.</label><br>
+                    <label><input type="radio" name="q6" value="B" id="q6b"> B) 관련된 자료를 충분히 수집하고 계획을 철저히 세운 후 시작한다.</label><br>
+                    <label><input type="radio" name="q6" value="C" id="q6c"> C) 경험이 있는 동료나 상사에게 조언을 구하고 도움을 요청한다.</label><br>
+                    <label><input type="radio" name="q6" value="D" id="q6d"> D) 업무를 작은 단위로 나누어 단계적으로 접근한다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 7: 팀 프로젝트가 성공적으로 완료되었습니다. 당신은 어떤 부분에서 가장 큰 만족감을 느끼나요?</legend>
+                    <label><input type="radio" name="q7" value="A" id="q7a"> A) 내가 제안한 아이디어나 해결책이 결정적인 역할을 했을 때.</label><br>
+                    <label><input type="radio" name="q7" value="B" id="q7b"> B) 팀원들과의 협력을 통해 어려운 문제를 함께 해결했을 때.</label><br>
+                    <label><input type="radio" name="q7" value="C" id="q7c"> C) 맡은 바 책임을 다하고 팀 전체의 목표 달성에 기여했을 때.</label><br>
+                    <label><input type="radio" name="q7" value="D" id="q7d"> D) 프로젝트를 통해 새로운 것을 배우고 성장할 수 있었을 때.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 8: 팀원이 실수로 인해 프로젝트에 차질을 빚었습니다. 당신의 일반적인 반응은 무엇인가요?</legend>
+                    <label><input type="radio" name="q8" value="A" id="q8a"> A) 실수를 비난하기보다 문제 해결에 집중하고, 재발 방지책을 함께 고민한다.</label><br>
+                    <label><input type="radio" name="q8" value="B" id="q8b"> B) 팀원을 위로하고 격려하며, 다시 잘 해낼 수 있도록 지지한다.</label><br>
+                    <label><input type="radio" name="q8" value="C" id="q8c"> C) 정확히 어떤 실수가 있었는지 파악하고, 향후 유사한 실수를 방지하기 위한 절차를 마련한다.</label><br>
+                    <label><input type="radio" name="q8" value="D" id="q8d"> D) 일단 발생한 문제를 빠르게 수습하는 데 집중하고, 추후에 원인 분석을 한다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 9: 새로운 기술이나 시스템이 팀에 도입될 예정입니다. 당신의 태도는 어떻습니까?</legend>
+                    <label><input type="radio" name="q9" value="A" id="q9a"> A) 새로운 변화에 대해 기대감을 갖고 적극적으로 배우고 활용하려 한다.</label><br>
+                    <label><input type="radio" name="q9" value="B" id="q9b"> B) 변화가 가져올 장단점을 신중하게 분석하고, 팀에 미칠 영향을 고려한다.</label><br>
+                    <label><input type="radio" name="q9" value="C" id="q9c"> C) 다른 팀원들이 새로운 기술에 잘 적응할 수 있도록 돕고 정보를 공유한다.</label><br>
+                    <label><input type="radio" name="q9" value="D" id="q9d"> D) 기존 방식에 익숙하다면, 새로운 시스템에 대한 필요성을 느끼기 전까지는 소극적일 수 있다.</label><br>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Question 10: 팀 회의에서 당신의 아이디어가 비판을 받았습니다. 어떻게 대응하시겠습니까?</legend>
+                    <label><input type="radio" name="q10" value="A" id="q10a"> A) 비판 내용을 경청하고, 아이디어의 어떤 부분이 부족했는지 객관적으로 검토한다.</label><br>
+                    <label><input type="radio" name="q10" value="B" id="q10b"> B) 내 아이디어의 논리와 근거를 다시 한번 명확하게 설명하며 이해를 구한다.</label><br>
+                    <label><input type="radio" name="q10" value="C" id="q10c"> C) 감정적으로 대응하기보다는, 건설적인 피드백으로 받아들이고 개선의 기회로 삼는다.</label><br>
+                    <label><input type="radio" name="q10" value="D" id="q10d"> D) 다른 사람들의 의견도 일리가 있다고 판단되면, 내 아이디어를 수정하거나 철회할 수 있다.</label><br>
+                </fieldset>
+                <button type="submit" id="submitBtn">Submit Answers</button>
+            </div>
+        </form>
+    </section>
+
+    <section id="results-section">
+        <h2>Results</h2>
+        <div id="results">
+            <p>Complete the questionnaire and click 'Submit Answers' to see your profile.</p>
+        </div>
+        <div id="aiFeedback" style="display: none;">
+            <h2>Personalized Feedback</h2>
+            <p id="aiFeedbackText">Your personalized feedback will appear here.</p>
+        </div>
+    </section>
+
+    <section class="static-content-section">
+        <h2>기대 효과</h2>
+        <ul>
+            <li><strong>개인:</strong> 자신의 협업 스타일과 강점, 약점을 객관적으로 인식할 수 있습니다.</li>
+            <li><strong>팀:</strong> 구성원 간의 상호 이해를 증진시키고, 잠재적 갈등 요소를 예측 및 관리하며, 역할 분담 및 협업 방식을 최적화하는 데 도움이 됩니다.</li>
+            <li><strong>조직:</strong> 건강한 협업 문화를 조성하여 팀 생산성과 창의성을 향상시킬 수 있습니다.</li>
+        </ul>
+    </section>
+
+    <section class="static-content-section">
+        <h2>향후 발전 방향</h2>
+        <ul>
+            <li>팀 단위 종합 분석 리포트 제공</li>
+            <li>역량 개발을 위한 맞춤형 학습 콘텐츠 연동</li>
+            <li>주기적인 재측정을 통한 성장 추이 관리</li>
+        </ul>
+    </section>
+
+    <!-- Removed old script.js -->
+    <script src="scoring.js" defer></script>
+    <script src="feedback.js" defer></script>
+    <script src="ui.js" defer></script>
+    <script src="main.js" defer></script>
+</body>
+</html>

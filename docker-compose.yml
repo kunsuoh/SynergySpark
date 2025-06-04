@@ -1,0 +1,34 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: . # Build context is the root of the project
+      dockerfile: frontend.Dockerfile
+    ports:
+      - "8080:80" # Host:Container
+    depends_on:
+      - backend
+    networks:
+      - synergyspark-net
+
+  backend:
+    build:
+      context: ./backend # Build context is the backend directory
+      dockerfile: Dockerfile # Refers to backend/Dockerfile
+    ports:
+      - "3000:3000" # Expose for direct access if needed, otherwise Nginx proxy is used
+    volumes:
+      - synergyspark_db_data:/usr/src/app/database # Persist SQLite DB
+    environment:
+      - PORT=3000
+    networks:
+      - synergyspark-net
+
+volumes:
+  synergyspark_db_data: # Named volume for database persistence
+
+networks:
+  synergyspark-net:
+    driver: bridge
